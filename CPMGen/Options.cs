@@ -1,5 +1,6 @@
 ﻿using System;
 using CommandLine;
+using CommandLine.Text;
 
 namespace CPMGen;
 /*
@@ -23,7 +24,7 @@ public class Options
 
     [Option('s', "solution", 
         HelpText = "Specifies the solution file location. If this option is provided " +
-                   "the project file location option will be ignored.", Required = false)]
+                   "the project file location option will be ignored.", Required = false, Default = ".")]
     public string SolutionFileDir { get; set; } = string.Empty;
 
     [Option('p', "project", HelpText = "Specifies the project file location. ")]
@@ -31,4 +32,12 @@ public class Options
 
     [Option('o', "output-dir", HelpText = "The props file output directory.", Default = ".")]
     public string OutputDir { get; set; } = string.Empty;
+    
+    [Usage(ApplicationAlias = "CPMGen")]
+    public static IEnumerable<Example> Examples =>
+        new List<Example>() {
+            new("Default behaviour", new Options {  }),
+            new("Convert only one project", new Options { ProjectFileDir = Path.Combine("path", "to", "project.csproj") }),
+            new("Specify the output directory, generates '../upDir/Directory.Packages.props'", new Options { OutputDir = Path.Combine("..", "upDir") }),
+        };
 }
