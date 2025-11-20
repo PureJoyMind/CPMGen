@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [versionize](https://github.com/versionize/versionize) for commit guidelines.
 
+<a name="0.1.4"></a>
+## [0.1.4](https://www.github.com/PureJoyMind/CPMGen/releases/tag/v0.1.4) (2025-11-20)
+
+### Bug Fixes
+
+* added console log to Program.cs ([ef71972](https://www.github.com/PureJoyMind/CPMGen/commit/ef7197290df07d51613f12716391df2d083ad9a2))
+
 <a name="0.1.3"></a>
 ## [0.1.3](https://www.github.com/PureJoyMind/CPMGen/releases/tag/v0.1.3) (2025-11-20)
 
