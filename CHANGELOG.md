@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [versionize](https://github.com/versionize/versionize) for commit guidelines.
 
+<a name="0.1.5"></a>
+## [0.1.5](https://www.github.com/PureJoyMind/CPMGen/releases/tag/v0.1.5) (2025-11-20)
+
+### Bug Fixes
+
+* changed deploy pipeline again ([dccc6bd](https://www.github.com/PureJoyMind/CPMGen/commit/dccc6bdabe21e21e96c128071f85f41d5fc1795b))
+
 <a name="0.1.4"></a>
 ## [0.1.4](https://www.github.com/PureJoyMind/CPMGen/releases/tag/v0.1.4) (2025-11-20)
 
