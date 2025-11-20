@@ -32,7 +32,7 @@ public partial class Options
 
     [Option("backup-dir", Default = ".",
         HelpText = "The backup directory for .csproj files about to be changed.")]
-    public string BackupDir { get; set; }
+    public string BackupDir { get; set; } = string.Empty;
 
     [Option("add-gitignore", Default = false,
         HelpText = "Adds the backup directory to .gitignore file. Creates one if not present")]
@@ -40,7 +40,7 @@ public partial class Options
 
     [Option("gitignore-dir", Default = ".",
         HelpText = "The directory for .gitignore file if there isn't one existing.")]
-    public string GitignoreDir { get; set; }
+    public string GitignoreDir { get; set; } = string.Empty;
 
     [Usage(ApplicationAlias = "CPMGen")]
     public static IEnumerable<Example> Examples =>

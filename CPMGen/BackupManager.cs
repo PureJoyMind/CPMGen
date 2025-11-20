@@ -4,13 +4,12 @@ public class BackupManager
 {
     public string? CreateBackupDirectory(Options opt)
     {
-        string backupPath = null;
-        if (!opt.NoBackup)
-        {
-            backupPath = Path.Combine(Path.GetFullPath(string.IsNullOrEmpty(opt.BackupDir) ? "." : opt.BackupDir), ".cpmgen_backup");
-            Directory.CreateDirectory(backupPath);
-            Console.WriteLine($"Backup directory: {backupPath}");
-        }
+        var backupPath = string.Empty;
+        if (opt.NoBackup) return backupPath;
+        
+        backupPath = Path.Combine(Path.GetFullPath(string.IsNullOrEmpty(opt.BackupDir) ? "." : opt.BackupDir), ".cpmgen_backup");
+        Directory.CreateDirectory(backupPath);
+        Console.WriteLine($"Backup directory: {backupPath}");
 
         return backupPath;
     }

@@ -32,7 +32,7 @@ await Parser.Default.ParseArguments<Options>(args)
         
         foreach (var projectFilePath in projectPaths)
         {
-            backupManager.CreateBackupForProject(opt, projectFilePath, backupPath);
+            backupManager.CreateBackupForProject(opt, projectFilePath, backupPath!);
 
             var projectFileContent = opt.ProcessProjectFileContent(manager, projectFilePath, packages, opt);
 

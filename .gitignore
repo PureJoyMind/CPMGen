@@ -263,6 +263,8 @@ typings/
 **/*.Server/ModelManifest.xml
 _Pvt_Extensions
 
+cpmgen.snk
+
 # Paket dependency manager
 .paket/paket.exe
 paket-files/

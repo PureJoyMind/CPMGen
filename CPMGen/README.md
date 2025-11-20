@@ -99,7 +99,7 @@ On a standard execution:
 
 ## Requirements
 
-- **.NET SDK**: Any version that supports the modern SDK-style project format (introduced in Visual Studio 2017)
+- **.NET SDK**: Currently the tool is configured to be built for `.NET` versions 8 & 9, but I'll add other versions support soon
 - **Project Format**: SDK-style `.csproj` files (the modern XML format)
 - **Operating System**: Windows, macOS, or Linux
 
