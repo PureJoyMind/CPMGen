@@ -44,23 +44,19 @@ jobs:
           github_token: ${{ secrets.GITHUB_TOKEN }}
           branch: ${{ github.ref }}
           tags: true
+      
       - name: 'Create release'
+        id: create_release
         if: steps.versionize.outcome == 'success'
         uses: 'actions/github-script@v5'
         with:
           github-token: '${{ secrets.GITHUB_TOKEN }}'
           script: |
-            const fs = require('fs');
-            const path = require('path');
-            const glob = require('glob');
-            
             try {
               const tags_url = context.payload.repository.tags_url + "?per_page=1"
               const result = await github.request(tags_url)
               const current_tag = result.data[0].name
-              
-              // Create the release
-              const release = await github.rest.repos.createRelease({
+              await github.rest.repos.createRelease({
                 draft: false,
                 generate_release_notes: true,
                 name: current_tag,
@@ -69,27 +65,20 @@ jobs:
                 repo: context.repo.repo,
                 tag_name: current_tag,
               });
-              
-              // Find and upload all .nupkg files
-              const nupkgFiles = glob.sync('**/*.nupkg');
-              
-              for (const file of nupkgFiles) {
-                const fileName = path.basename(file);
-                const fileContent = fs.readFileSync(file);
-                
-                await github.rest.repos.uploadReleaseAsset({
-                  owner: context.repo.owner,
-                  repo: context.repo.repo,
-                  release_id: release.data.id,
-                  name: fileName,
-                  data: fileContent,
-                });
-                
-                console.log(`Uploaded ${fileName}`);
-              }
             } catch (error) {
               core.setFailed(error.message);
             }
+          result-encoding: string
+          
+      - name: Upload NuGet packages to release
+        if: steps.versionize.outcome == 'success'
+        uses: softprops/action-gh-release@v1
+        with:
+          files: '**/*.nupkg'
+          tag_name: ${{ steps.create_release.outputs.result }}
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
       - name: NuGet login (OIDC → temp API key)
         if: steps.versionize.outcome == 'success'
         uses: NuGet/login@v1
