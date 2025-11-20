@@ -5,6 +5,7 @@ using CPMGen;
 await Parser.Default.ParseArguments<Options>(args)
     .WithParsedAsync(async opt =>
     {
+        Console.WriteLine("Starting operation...");
         opt.Validate();
         
         var basePath = "";
