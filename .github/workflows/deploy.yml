@@ -45,40 +45,58 @@ jobs:
           branch: ${{ github.ref }}
           tags: true
       
-      - name: 'Create release'
-        id: create_release
+#      - name: 'Create release'
+#        id: create_release
+#        if: steps.versionize.outcome == 'success'
+#        uses: 'actions/github-script@v5'
+#        with:
+#          github-token: '${{ secrets.GITHUB_TOKEN }}'
+#          script: |
+#            try {
+#              const tags_url = context.payload.repository.tags_url + "?per_page=1"
+#              const result = await github.request(tags_url)
+#              const current_tag = result.data[0].name
+#              await github.rest.repos.createRelease({
+#                draft: false,
+#                generate_release_notes: true,
+#                name: current_tag,
+#                owner: context.repo.owner,
+#                prerelease: false,
+#                repo: context.repo.repo,
+#                tag_name: current_tag,
+#              });
+#            } catch (error) {
+#              core.setFailed(error.message);
+#            }
+#          result-encoding: string
+#          
+#      - name: Upload NuGet packages to release
+#        if: steps.versionize.outcome == 'success'
+#        uses: softprops/action-gh-release@v1
+#        with:
+#          files: '**/*.nupkg'
+#          tag_name: ${{ steps.create_release.outputs.result }}
+#        env:
+#          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Get latest tag
         if: steps.versionize.outcome == 'success'
-        uses: 'actions/github-script@v5'
-        with:
-          github-token: '${{ secrets.GITHUB_TOKEN }}'
-          script: |
-            try {
-              const tags_url = context.payload.repository.tags_url + "?per_page=1"
-              const result = await github.request(tags_url)
-              const current_tag = result.data[0].name
-              await github.rest.repos.createRelease({
-                draft: false,
-                generate_release_notes: true,
-                name: current_tag,
-                owner: context.repo.owner,
-                prerelease: false,
-                repo: context.repo.repo,
-                tag_name: current_tag,
-              });
-            } catch (error) {
-              core.setFailed(error.message);
-            }
-          result-encoding: string
-          
-      - name: Upload NuGet packages to release
+        id: get_tag
+        run: |
+          TAG=$(git describe --tags --abbrev=0)
+          echo "tag=$TAG" >> $GITHUB_OUTPUT
+
+      - name: Create release with NuGet packages
         if: steps.versionize.outcome == 'success'
         uses: softprops/action-gh-release@v1
         with:
+          tag_name: ${{ steps.get_tag.outputs.tag }}
+          generate_release_notes: true
           files: '**/*.nupkg'
-          tag_name: ${{ steps.create_release.outputs.result }}
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-
+      
+      
       - name: NuGet login (OIDC → temp API key)
         if: steps.versionize.outcome == 'success'
         uses: NuGet/login@v1
