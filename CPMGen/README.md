@@ -4,7 +4,7 @@ A command-line tool that helps you quickly migrate large .NET solutions to Centr
 
 ## Why CPMGen?
 
-Migrating large solutions with dozens or hundreds of projects to Central Package Management can be tedious and error-prone. CPMGen automates this process, allowing you to modernize your .NET solution's package management in minutes instead of hours.
+Migrating large solutions with multiple projects to Central Package Management can be tedious and error-prone. CPMGen automates this process, allowing you to modernize your .NET solution's package management in seconds instead of hours.
 
 ## Features
 
