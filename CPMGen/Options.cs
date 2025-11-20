@@ -9,13 +9,13 @@ namespace CPMGen;
 public partial class Options
 {
     #region options
-    
+
     [Option('s', "solution",
-        HelpText = "Specifies the solution file location. If this option is provided " +
+        HelpText = "Specifies the directory to search for .sln files, If this option is provided " +
                    "the project file location option will be ignored.", Required = false, Default = ".")]
     public string SolutionFileDir { get; set; } = string.Empty;
 
-    [Option('p', "project", HelpText = "Specifies the project file location. ")]
+    [Option('p', "project", HelpText = "Specifies the directory to search for .csproj files. ")]
     public string ProjectFileDir { get; set; } = string.Empty;
 
     [Option('o', "output-dir", HelpText = "The props file output directory.", Default = ".")]
@@ -41,7 +41,7 @@ public partial class Options
     [Option("gitignore-dir", Default = ".",
         HelpText = "The directory for .gitignore file if there isn't one existing.")]
     public string GitignoreDir { get; set; }
-    
+
     [Usage(ApplicationAlias = "CPMGen")]
     public static IEnumerable<Example> Examples =>
         new List<Example>()
@@ -97,7 +97,31 @@ public partial class Options
                 return;
             }
 
-            solutionPath = slnFiles[0];
+            if (slnFiles.Length > 1)
+            {
+                while (true)
+                {
+                    Console.WriteLine("Multiple solution files found in the specified directory.");
+                    for (int i = 0; i < slnFiles.Length; i++)
+                    {
+                        Console.WriteLine($"{i + 1} - {Path.GetFileName(slnFiles[i])}");
+                    }
+                    Console.Write($"Which solution file do you want to use? [1 - {slnFiles.Length}]: ");
+                    var choice = Console.ReadLine();
+                
+                    if (int.TryParse(choice, out var choiceNumber) && choiceNumber >= 1 && choiceNumber <= slnFiles.Length)
+                    {
+                        solutionPath = slnFiles[choiceNumber - 1];
+                        break;
+                    }
+                
+                    Console.WriteLine($"\r\nInvalid choice. Please enter a number between 1 and {slnFiles.Length}.\r\n");
+                }
+            }
+            else
+            {
+                solutionPath = slnFiles[0];
+            }
         }
 
         if (!File.Exists(solutionPath))
@@ -182,7 +206,7 @@ public partial class Options
                   </PropertyGroup>
                   <ItemGroup>
                 """;
-        
+
         var stringBuilder = new StringBuilder();
         stringBuilder.AppendLine(s);
 
