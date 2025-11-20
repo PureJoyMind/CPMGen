@@ -7,7 +7,7 @@ public class BackupManager
         string backupPath = null;
         if (!opt.NoBackup)
         {
-            backupPath = Path.GetFullPath(string.IsNullOrEmpty(opt.BackupDir) ? "." : opt.BackupDir);
+            backupPath = Path.Combine(Path.GetFullPath(string.IsNullOrEmpty(opt.BackupDir) ? "." : opt.BackupDir), ".cpmgen_backup");
             Directory.CreateDirectory(backupPath);
             Console.WriteLine($"Backup directory: {backupPath}");
         }
@@ -33,7 +33,7 @@ public class BackupManager
             
             var gitignorePath = Path.GetFullPath(options.GitignoreDir);
             var gitignoreFile = Path.Combine(gitignorePath, ".gitignore");
-
+            
             var backupRelativePath = Path.GetRelativePath(gitignorePath, s!);
             var gitignoreEntry = $"\n# CPMGen backup directory\n{backupRelativePath}/\n";
 

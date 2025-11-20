@@ -9,25 +9,7 @@ namespace CPMGen;
 public partial class Options
 {
     #region options
-
-    [Option('n', "no-backup", Default = false,
-        HelpText = "Disables the default backup option", Required = false)]
-    public bool NoBackup { get; set; }
-
-    [Option("backup-dir", HelpText = "The backup directory for .csproj files about to be changed.")]
-    public string BackupDir { get; set; }
-
-    [Option("add-gitignore", Default = false,
-        HelpText = "Adds the backup directory to .gitignore file. Creates one if not present")]
-    public bool AddBackupToGitignore { get; set; }
-
-    [Option("gitignore-dir", HelpText = "The directory for .gitignore file if there isn't one existing.")]
-    public string GitignoreDir { get; set; }
-
-    [Option('k', "keep-attrs", Default = false,
-        HelpText = "Keeps the 'Version' attribute in the .csproj files.")]
-    public bool KeepAttributes { get; set; }
-
+    
     [Option('s', "solution",
         HelpText = "Specifies the solution file location. If this option is provided " +
                    "the project file location option will be ignored.", Required = false, Default = ".")]
@@ -39,6 +21,27 @@ public partial class Options
     [Option('o', "output-dir", HelpText = "The props file output directory.", Default = ".")]
     public string OutputDir { get; set; } = string.Empty;
 
+    [Option('k', "keep-attrs", Default = false,
+        HelpText = "Keeps the 'Version' attribute in the .csproj files.")]
+    public bool KeepAttributes { get; set; }
+
+
+    [Option('n', "no-backup", Default = false,
+        HelpText = "Disables the default backup option", Required = false)]
+    public bool NoBackup { get; set; }
+
+    [Option("backup-dir", Default = ".",
+        HelpText = "The backup directory for .csproj files about to be changed.")]
+    public string BackupDir { get; set; }
+
+    [Option("add-gitignore", Default = false,
+        HelpText = "Adds the backup directory to .gitignore file. Creates one if not present")]
+    public bool AddBackupToGitignore { get; set; }
+
+    [Option("gitignore-dir", Default = ".",
+        HelpText = "The directory for .gitignore file if there isn't one existing.")]
+    public string GitignoreDir { get; set; }
+    
     [Usage(ApplicationAlias = "CPMGen")]
     public static IEnumerable<Example> Examples =>
         new List<Example>()

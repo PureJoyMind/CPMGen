@@ -52,6 +52,3 @@ await Parser.Default.ParseArguments<Options>(args)
 
         Console.WriteLine("\nCompleted successfully!");
     });
-    
-    Console.WriteLine("Press any key to exit...");
-    Console.ReadKey();
