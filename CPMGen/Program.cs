@@ -5,7 +5,16 @@ using System.Text.RegularExpressions;
 using Buildalyzer;
 using Buildalyzer.Construction;
 
-var basePath = @"E:\VS Projects\Mentorly";
+/*
+ * options:
+ *  --no-backup: disables the default backup option
+ *  --solution -s : sepcifies the solution file
+ *  --project -p : specifies the project file
+ *  --no-remove : doesn't remove the version attribute from the .csproj files
+ */
+
+
+var basePath = @"E:\tmp\Mentorly - Copy (2)";
 
     var solutionPath = Path.Combine(basePath, "Mentorly.sln");   
 if (File.Exists(solutionPath))
@@ -26,13 +35,22 @@ if (File.Exists(solutionPath))
         if(!projectPath.EndsWith("csproj")) continue;
         Console.WriteLine($"Project Name: {projectName}, Project Path: {projectPath}");
         var manager = new AnalyzerManager();
-        var analyzer = manager.GetProject(Path.Combine(basePath, projectPath));
+        var projectFilePath = Path.Combine(basePath, projectPath);
+        var analyzer = manager.GetProject(projectFilePath);
+        
+        var projectFileContent = new StringBuilder(File.ReadAllText(projectFilePath));
+        
         foreach (var reference in analyzer.ProjectFile.PackageReferences)
         {
             if(packages.TryGetValue(reference.Name, out var value)) value.Add(reference.Version);
             else
                 packages.Add(reference.Name, new HashSet<string> { reference.Version });
+
+            projectFileContent.Replace($"Version=\"{reference.Version}\"", "");
         }
+        
+        // TODO: you have the replaced file content, write it to .csproj file
+        await File.WriteAllTextAsync(projectFilePath, projectFileContent.ToString());
     }
 
 
@@ -57,11 +75,8 @@ if (File.Exists(solutionPath))
                               </ItemGroup>
                             </Project>
                             """);
-    
-    await using var fs = File.Create(Path.Combine(basePath, "Directory.Packages.props"));
-    await using var writer = new StreamWriter(fs);
-    await writer.WriteAsync(packageProps.ToString());
-    // await fs.WriteAsync;
+
+    await File.WriteAllTextAsync(Path.Combine(basePath, "Directory.Packages.props"), packageProps.ToString());
 }
 else
 {
