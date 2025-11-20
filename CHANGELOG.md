@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [versionize](https://github.com/versionize/versionize) for commit guidelines.
 
+<a name="0.1.3"></a>
+## [0.1.3](https://www.github.com/PureJoyMind/CPMGen/releases/tag/v0.1.3) (2025-11-20)
+
+### Bug Fixes
+
+* changed deploy.yml to include .nupkg files in releases ([9ce1a59](https://www.github.com/PureJoyMind/CPMGen/commit/9ce1a59794c4bc2762d3dde04a70636673d6e01d))
+
 <a name="0.1.2"></a>
 ## [0.1.2](https://www.github.com/PureJoyMind/CPMGen/releases/tag/v0.1.2) (2025-11-20)
 
