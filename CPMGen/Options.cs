@@ -12,7 +12,7 @@ public partial class Options
 
     [Option('s', "solution",
         HelpText = "Specifies the directory to search for .sln files, If this option is provided " +
-                   "the project file location option will be ignored.", Required = false, Default = ".")]
+                   "the project file location option will be ignored.", Required = false, Default = ".") ]
     public string SolutionFileDir { get; set; } = string.Empty;
 
     [Option('p', "project", HelpText = "Specifies the directory to search for .csproj files. ")]
