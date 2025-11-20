@@ -55,38 +55,38 @@ jobs:
             const glob = require('glob');
             
             try {
-            const tags_url = context.payload.repository.tags_url + "?per_page=1"
-            const result = await github.request(tags_url)
-            const current_tag = result.data[0].name
-            
-            // Create the release
-            const release = await github.rest.repos.createRelease({
-            draft: false,
-            generate_release_notes: true,
-            name: current_tag,
-            owner: context.repo.owner,
-            prerelease: false,
-            repo: context.repo.repo,
-            tag_name: current_tag,
-            });
-            
-            // Find and upload all .nupkg files
-            const nupkgFiles = glob.sync('**/*.nupkg');
-            
-            for (const file of nupkgFiles) {
-            const fileName = path.basename(file);
-            const fileContent = fs.readFileSync(file);
-            
-            await github.rest.repos.uploadReleaseAsset({
-            owner: context.repo.owner,
-            repo: context.repo.repo,
-            release_id: release.data.id,
-            name: fileName,
-            data: fileContent,
-            });
-            
-              console.log(`Uploaded ${fileName}`);
-            }
+              const tags_url = context.payload.repository.tags_url + "?per_page=1"
+              const result = await github.request(tags_url)
+              const current_tag = result.data[0].name
+              
+              // Create the release
+              const release = await github.rest.repos.createRelease({
+                draft: false,
+                generate_release_notes: true,
+                name: current_tag,
+                owner: context.repo.owner,
+                prerelease: false,
+                repo: context.repo.repo,
+                tag_name: current_tag,
+              });
+              
+              // Find and upload all .nupkg files
+              const nupkgFiles = glob.sync('**/*.nupkg');
+              
+              for (const file of nupkgFiles) {
+                const fileName = path.basename(file);
+                const fileContent = fs.readFileSync(file);
+                
+                await github.rest.repos.uploadReleaseAsset({
+                  owner: context.repo.owner,
+                  repo: context.repo.repo,
+                  release_id: release.data.id,
+                  name: fileName,
+                  data: fileContent,
+                });
+                
+                console.log(`Uploaded ${fileName}`);
+              }
             } catch (error) {
               core.setFailed(error.message);
             }
