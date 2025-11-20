@@ -9,10 +9,10 @@ on:
       - "master"
 
 jobs:
-  build:
+  build-and-publish:
     permissions:
-      id-token: write  
-    
+      contents: read
+      id-token: write     
     runs-on: ubuntu-latest
     
     steps:
@@ -21,6 +21,7 @@ jobs:
         uses: actions/setup-dotnet@v5
         with:
           dotnet-version: '9.0.x'
+
       - name: Build
         run: dotnet build  --configuration Release
       
@@ -28,7 +29,7 @@ jobs:
         uses: NuGet/login@v1
         id: login
         with:
-          user: ${{ secrets.NUGET_USER }} # Recommended: use a secret like ${{ secrets.NUGET_USER }} for your nuget.org username (profile name), NOT your email address
+          user: 'mazdak'
 
       - name: NuGet push
         run: dotnet nuget push artifacts/*.nupkg --api-key ${{steps.login.outputs.NUGET_API_KEY}} --source https://api.nuget.org/v3/index.json
