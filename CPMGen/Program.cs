@@ -1,84 +1,57 @@
-﻿// See https://aka.ms/new-console-template for more information
+﻿using Buildalyzer;
+using CommandLine;
+using CPMGen;
 
-using System.Text;
-using System.Text.RegularExpressions;
-using Buildalyzer;
-using Buildalyzer.Construction;
-
-/*
- * options:
- *  --no-backup: disables the default backup option
- *  --solution -s : sepcifies the solution file
- *  --project -p : specifies the project file
- *  --no-remove : doesn't remove the version attribute from the .csproj files
- */
-
-
-var basePath = @"E:\tmp\Mentorly - Copy (2)";
-
-    var solutionPath = Path.Combine(basePath, "Mentorly.sln");   
-if (File.Exists(solutionPath))
-{
-    var solutionContent = File.ReadAllText(solutionPath);
-
-    var matches = Regex.Matches(solutionContent, 
-        @"Project\(""\{(.+?)\}""\) = ""(.+?)"", ""(.+?)""", RegexOptions.Multiline);
-
-    
-    var packages = new Dictionary<string, HashSet<string>>();
-    
-    foreach (Match match in matches)
+await Parser.Default.ParseArguments<Options>(args)
+    .WithParsedAsync(async opt =>
     {
-        var projectId = match.Groups[1].Value;
-        var projectName = match.Groups[2].Value;
-        var projectPath = match.Groups[3].Value;
-        if(!projectPath.EndsWith("csproj")) continue;
-        Console.WriteLine($"Project Name: {projectName}, Project Path: {projectPath}");
-        var manager = new AnalyzerManager();
-        var projectFilePath = Path.Combine(basePath, projectPath);
-        var analyzer = manager.GetProject(projectFilePath);
+        opt.Validate();
         
-        var projectFileContent = new StringBuilder(File.ReadAllText(projectFilePath));
-        
-        foreach (var reference in analyzer.ProjectFile.PackageReferences)
+        var basePath = "";
+        var projectPaths = new List<string>();
+
+        if (!string.IsNullOrWhiteSpace(opt.SolutionFileDir))
         {
-            if(packages.TryGetValue(reference.Name, out var value)) value.Add(reference.Version);
-            else
-                packages.Add(reference.Name, new HashSet<string> { reference.Version });
-
-            projectFileContent.Replace($"Version=\"{reference.Version}\"", "");
+           opt.HandleSolution(ref basePath, projectPaths); 
         }
+        else if (!string.IsNullOrWhiteSpace(opt.ProjectFileDir))
+        {
+            opt.HandleProject(ref basePath, projectPaths);
+        }
+        else
+        {
+            Console.WriteLine("Either solution or project path must be specified.");
+            return;
+        }
+
+        var packages = new Dictionary<string, HashSet<string>>();
+        var manager = new AnalyzerManager();
+        var backupManager = new BackupManager();
         
-        // TODO: you have the replaced file content, write it to .csproj file
-        await File.WriteAllTextAsync(projectFilePath, projectFileContent.ToString());
-    }
+        var backupPath =  backupManager.CreateBackupDirectory(opt);
+        
+        foreach (var projectFilePath in projectPaths)
+        {
+            backupManager.CreateBackupForProject(opt, projectFilePath, backupPath);
 
+            var projectFileContent = opt.ProcessProjectFileContent(manager, projectFilePath, packages, opt);
 
-    var str = """
-                       <Project>
-                         <PropertyGroup>
-                           <ManagePackageVersionsCentrally>true</ManagePackageVersionsCentrally>
-                         </PropertyGroup>
-                         <ItemGroup>
-                       """;
+            await File.WriteAllTextAsync(projectFilePath, projectFileContent);
+            Console.WriteLine($"Updated: {Path.GetFileName(projectFilePath)}");
+        }
 
-    var packageProps = new StringBuilder();
-    packageProps.AppendLine(str);
+        var updatedPackagePropsContent = opt.UpdatePackageProps(packages);
+
+        var outputPath = Path.GetFullPath(opt.OutputDir);
+        var propsFilePath = Path.Combine(outputPath, "Directory.Packages.props");
+        await File.WriteAllTextAsync(propsFilePath, updatedPackagePropsContent);
+        Console.WriteLine($"Generated: {propsFilePath}");
+
+        // Add to .gitignore if requested
+        await backupManager.ManageGitIgnore(opt, backupPath);
+
+        Console.WriteLine("\nCompleted successfully!");
+    });
     
-    foreach (var kvp in packages)
-    {
-        foreach (var version in kvp.Value)
-            packageProps.AppendLine($"""    <PackageVersion Include="{kvp.Key}" Version="{version}" />""");
-    }
-
-    packageProps.AppendLine("""
-                              </ItemGroup>
-                            </Project>
-                            """);
-
-    await File.WriteAllTextAsync(Path.Combine(basePath, "Directory.Packages.props"), packageProps.ToString());
-}
-else
-{
-    Console.WriteLine("Solution file not found.");
-}
+    Console.WriteLine("Press any key to exit...");
+    Console.ReadKey();
