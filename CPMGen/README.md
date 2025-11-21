@@ -1,5 +1,5 @@
-﻿# CPMGen
-
+﻿![cpmgen-banner.png](../assets/cpmgen-banner.png)
+# CPMGen
 A command-line tool that helps you quickly migrate large .NET solutions to Central Package Management (CPM). CPMGen automatically generates `Directory.Packages.props` files and updates your `.csproj` files, making the transition to centralized package management effortless.
 
 ## Why CPMGen?
@@ -119,8 +119,8 @@ Contributions are welcome! Whether it's bug reports, feature requests, or code c
 
 ## License
 
-This project is licensed under the **GNU Affero General Public License v3.0 (AGPL-3.0)**.
-This ensures CPMGen remains free and open-source for everyone, forever.
+This project is licensed under the MIT License.
+It provides maximum flexibility, allowing you to use, modify, distribute, and sublicense the software with minimal restrictions.
 See the [LICENSE](LICENSE) file for details.
 
 ## Support

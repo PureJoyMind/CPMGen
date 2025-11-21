@@ -24,6 +24,7 @@
         <PackageLicenseExpression>MIT</PackageLicenseExpression>
         <RepositoryUrl>https://github.com/purejoymind/cpmgen</RepositoryUrl>
         <RepositoryType>git</RepositoryType>
+        <ApplicationIcon>cpmgen.ico</ApplicationIcon>
     </PropertyGroup>
 
     <ItemGroup>
